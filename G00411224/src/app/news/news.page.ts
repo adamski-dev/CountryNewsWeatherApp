@@ -15,8 +15,9 @@ import { HttpOptions } from '@capacitor/core';
 })
 export class NewsPage implements OnInit {
 
+    resultStatus!: number;
+    apiKey = "pub_638369bdc1a34699248a32cd65d0a5b49e2ae";  
     country!: string;
-    apiKey = "pub_638369bdc1a34699248a32cd65d0a5b49e2ae";
     countryCCA2: string = "";
     newsData!: any[];
     options: HttpOptions = {
@@ -26,15 +27,19 @@ export class NewsPage implements OnInit {
     constructor(private dataService: DataService, private httpService: HttpService) { }
   
     ngOnInit() {
-      this.getCCA2();
+      this.getPageContent();
+      this.getCountryName();
     }
   
-    async getCCA2(){
+    async getPageContent(){
       this.countryCCA2 = await this.dataService.get('countryCCA2');
       this.options.url = this.options.url.concat(this.countryCCA2);
       let result = await this.httpService.get(this.options);
-      this.newsData = result.data.results;
+      this.newsData = (result.status == 200) ? result.data.results : (this.resultStatus = result.status);
       console.log(this.newsData);
     }
 
+    async getCountryName(){
+      this.country = await this.dataService.get('countryName');
+    }
 }

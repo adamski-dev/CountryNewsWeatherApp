@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonButton, IonItem, IonCol, IonInput } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonButton, IonItem, IonCol, IonInput, IonAlert } from '@ionic/angular/standalone';
 import { DataService } from '../services/data.service';
 import { HttpService } from '../services/http.service';
 import { HttpOptions } from '@capacitor/core';
@@ -12,11 +12,11 @@ import { Router } from '@angular/router';
   templateUrl: './countries.page.html',
   styleUrls: ['./countries.page.scss'],
   standalone: true,
-  imports: [IonInput, IonCol, IonItem, IonButton, IonCardSubtitle, IonCardTitle, IonCardHeader, IonCard, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonAlert, IonInput, IonCol, IonItem, IonButton, IonCardSubtitle, IonCardTitle, IonCardHeader, IonCard, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class CountriesPage implements OnInit {
 
-  
+  resultStatus!: number;
   keyWord: string = "";
   countries!: any[];
   options: HttpOptions = {
@@ -33,12 +33,12 @@ export class CountriesPage implements OnInit {
     this.keyWord = await this.dataService.get('keyWord');
     this.options.url = this.options.url.concat(this.keyWord);
     let result = await this.httpService.get(this.options);
-    this.countries = result.data;
-    console.log(this.countries);
+    this.countries = (result.status == 200) ? result.data : (this.resultStatus = result.status);
   }
 
-  async openNewsPage(countryCCA2: string){
+  async openNewsPage(countryCCA2: string, countryName: string){
     this.dataService.set("countryCCA2", countryCCA2);
+    this.dataService.set("countryName", countryName);
     this.router.navigate(['/news']);
   }
 }
