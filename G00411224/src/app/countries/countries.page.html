@@ -5,14 +5,15 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-card *ngFor="let country of countriesInfo">
+  <ion-card *ngFor="let country of countries let i = index">
     <img src="{{ country.flags.png }}" class="countries-img"/>
     <ion-card-header>
       
       <ion-card-title>{{ country.name.official }}</ion-card-title>
       <ion-col></ion-col>
-      <ion-button expand="block" fill="outline">News</ion-button>
+      <ion-button expand="block" fill="outline" (click)="openNewsPage(country.cca2)">News</ion-button>
       <ion-button expand="block" fill="outline">Weather</ion-button>
+      <ion-item>{{ country.latlng }}</ion-item>
       
     </ion-card-header>
     

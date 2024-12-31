@@ -7,9 +7,9 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-item lines="full">
-    <ion-input label="Enter Country:" placeholder="country name" [(ngModel)]="keyword"></ion-input>
-  </ion-item>
   
+  <ion-col></ion-col>
+  <ion-input label-placement="floating" fill="outline" label="Enter Country:" placeholder="country name" [(ngModel)]="keyword"></ion-input>
   <ion-button expand="block" (click)="openCountriesPage()">Search</ion-button>
+
 </ion-content>
