@@ -41,4 +41,8 @@ export class CountriesPage implements OnInit {
     this.dataService.set("countryName", countryName);
     this.router.navigate(['/news']);
   }
+
+  openWeatherPage(){
+
+  }
 }
