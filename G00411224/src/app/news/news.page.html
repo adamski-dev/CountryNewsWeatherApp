@@ -8,11 +8,6 @@
   <ion-item *ngIf="resultStatus == 422"><h4>No News found for {{ country }}</h4></ion-item>
   
   <ion-card *ngFor="let news of newsData ">
-    <!--
-    <div *ngIf="news.image_url == null">
-      <ion-item><h5>No image is available</h5></ion-item>
-    </div>
-    -->
     <ion-img *ngIf="news.image_url != null" src="{{ news.image_url }}" class="countries-img"></ion-img>
     <ion-card-header>
       <ion-card-title>{{ news.title }}</ion-card-title>

@@ -9,7 +9,7 @@ import { DataService } from '../services/data.service';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
-  imports: [IonIcon, IonCol, IonItem, IonButton, IonInput, IonHeader, IonToolbar, IonTitle, IonContent, FormsModule],
+  imports: [IonIcon, IonCol, IonButton, IonInput, IonHeader, IonToolbar, IonTitle, IonContent, FormsModule],
 })
 
 export class HomePage  {
@@ -21,7 +21,7 @@ export class HomePage  {
   }
 
   async openCountriesPage(){
-    this.dataService.set("keyWord", this.keyword);
+    await this.dataService.set("keyWord", this.keyword);
     this.router.navigate(['/countries']);
   }
 

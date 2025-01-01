@@ -9,7 +9,7 @@ import { DataService } from '../services/data.service';
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
   standalone: true,
-  imports: [IonInput, IonRow, IonGrid, IonItem, IonList, IonCol, IonRadio, IonRadioGroup, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonRow, IonGrid, IonItem, IonCol, IonRadio, IonRadioGroup, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class SettingsPage implements OnInit {
 
@@ -18,17 +18,28 @@ export class SettingsPage implements OnInit {
   constructor(private dataService: DataService) { }
 
   ngOnInit() {
-    this.getUnit();
+    this.checkIfUnitPresent();
   }
 
-  async getUnit(){
-    this.selected = await this.dataService.get('unit');
+  async checkIfUnitPresent(){
+    await this.dataService.get('unit').then(data =>{
+      if(!data){
+        this.setDefaultUnit();
+      }else {
+        this.selected = data;
+      }
+    })
+  }
+
+  async setDefaultUnit(){
+    this.selected = "metric";
+    await this.dataService.set("unit", this.selected);
   }
 
   ionViewWillLeave(){
     this.setUnit();
   }
-
+  
   async setUnit(){
     await this.dataService.set("unit", this.selected);
   }
