@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonRadioGroup, IonRadio, IonCol, IonList, IonItem, IonGrid, IonRow, IonInput } from '@ionic/angular/standalone';
+import { DataService } from '../services/data.service';
 
 @Component({
   selector: 'app-settings',
@@ -13,10 +14,23 @@ import { IonContent, IonHeader, IonTitle, IonToolbar, IonRadioGroup, IonRadio, I
 export class SettingsPage implements OnInit {
 
   selected: string = "";
-  constructor() { }
+
+  constructor(private dataService: DataService) { }
 
   ngOnInit() {
-    //this.selected = "metric";
+    this.getUnit();
+  }
+
+  async getUnit(){
+    this.selected = await this.dataService.get('unit');
+  }
+
+  ionViewWillLeave(){
+    this.setUnit();
+  }
+
+  async setUnit(){
+    await this.dataService.set("unit", this.selected);
   }
 
 }

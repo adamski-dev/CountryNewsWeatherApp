@@ -37,15 +37,15 @@ export class WeatherPage implements OnInit {
   async getUnit(){
     await this.dataService.get('unit').then(data =>{
       if(!data){
-        this.setUnit();
+        this.setDefaultUnit();
       }else {
         this.unit = data;
       }
     });
   }
 
-  async setUnit(){
-    this.dataService.set("unit", "metric");
+  async setDefaultUnit(){
+    await this.dataService.set("unit", "metric");
   }
 
   async getPageContent(){
