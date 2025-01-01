@@ -13,9 +13,7 @@
       <ion-card-title>{{ country.name.official }}</ion-card-title>
       <ion-col></ion-col>
       <ion-button expand="block" fill="outline" (click)="openNewsPage(country.cca2, country.name.official)">News</ion-button>
-      <ion-button expand="block" fill="outline" (click)="openWeatherPage()">Weather</ion-button>
-      <ion-item>{{ country.latlng }}</ion-item>
-      
+      <ion-button expand="block" fill="outline" (click)="openWeatherPage(country.latlng[0], country.latlng[1], country.capital[0])">Weather</ion-button>
     </ion-card-header>
     
   </ion-card>

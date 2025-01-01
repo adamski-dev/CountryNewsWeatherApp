@@ -34,6 +34,7 @@ export class CountriesPage implements OnInit {
     this.options.url = this.options.url.concat(this.keyWord);
     let result = await this.httpService.get(this.options);
     this.countries = (result.status == 200) ? result.data : (this.resultStatus = result.status);
+    console.log(this.countries);
   }
 
   async openNewsPage(countryCCA2: string, countryName: string){
@@ -42,7 +43,10 @@ export class CountriesPage implements OnInit {
     this.router.navigate(['/news']);
   }
 
-  openWeatherPage(){
-
+  openWeatherPage(lat: number, lon: number, capital: string){
+    this.dataService.set("latitude", lat);
+    this.dataService.set("longitude", lon);
+    this.dataService.set("capital", capital);
+    this.router.navigate(['/weather']);
   }
 }
