@@ -36,7 +36,6 @@ export class NewsPage implements OnInit {
       this.options.url = this.options.url.concat(this.countryCCA2);
       let result = await this.httpService.get(this.options);
       this.newsData = (result.status == 200) ? result.data.results : (this.resultStatus = result.status);
-      console.log(this.newsData);
     }
 
     async getCountryName(){

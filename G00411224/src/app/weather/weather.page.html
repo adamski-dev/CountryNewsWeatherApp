@@ -8,12 +8,35 @@
 
   <ion-item *ngIf="resultStatus == 422"><h4>No Weather Data found for {{ capital }}</h4></ion-item>
   
-  <ion-card>
+  <ion-card class="today">
+    <ion-card class="date">
+      <ion-card-subtitle class="dateText">Today</ion-card-subtitle>
+    </ion-card>
+
     <ion-img style="width: 80px;" src="{{ iconUrl }}" aria-hidden=""></ion-img>
+    
     <ion-card-header>
       <ion-card-title>{{ description }}</ion-card-title>
       <ion-card-subtitle>{{ temperature }} ({{ unit }})</ion-card-subtitle>
     </ion-card-header>
-    
   </ion-card>
+
+  <ion-button size="default" fill="solid" (click)="viewForecast()" class="forecastButton">
+    {{ this.forecastFlag ? 'Hide  5 days forecast' : 'View 5 days forecast' }}
+  </ion-button>
+
+  <div *ngIf="this.forecastFlag">
+    <ion-card *ngFor="let day of weather" class="forecastCard">
+      <ion-card class="date">
+        <ion-card-subtitle class="dateText">{{ day.date }}</ion-card-subtitle>
+      </ion-card>
+      
+      <ion-img style="width: 80px;" src="{{ day.icon }}" aria-hidden=""></ion-img>
+      <ion-card-header>
+        <ion-card-title>{{ day.description }}</ion-card-title>
+        <ion-card-subtitle>{{ day.temperature }} ({{ forecastUnit }})</ion-card-subtitle>
+      </ion-card-header>
+    </ion-card>
+  </div>
+  
 </ion-content>
