@@ -26,11 +26,11 @@ export class CountriesPage implements OnInit {
   constructor(private dataService: DataService, private httpService: HttpService, private router: Router) { }
 
   ngOnInit() {
-    this.getKeyWord();
+    this.getPageContent();
   }
 
-  async getKeyWord(){
-    this.keyWord = await this.dataService.get('keyWord');
+  async getPageContent(){
+    this.keyWord = await this.getKeyWord();
     this.options.url = this.options.url.concat(this.keyWord);
     let result = await this.httpService.get(this.options);
     this.countries = (result.status == 200) ? result.data : (this.resultStatus = result.status);
@@ -47,5 +47,9 @@ export class CountriesPage implements OnInit {
     await this.dataService.set("longitude", lon);
     await this.dataService.set("capital", capital);
     this.router.navigate(['/weather']);
+  }
+
+  async getKeyWord(){
+    return await this.dataService.get('keyWord');
   }
 }

@@ -22,11 +22,11 @@
   </ion-card>
 
   <ion-button size="default" fill="solid" (click)="viewForecast()" class="forecastButton">
-    {{ this.forecastFlag ? 'Hide  5 days forecast' : 'View 5 days forecast' }}
+    {{ this.forecastFlag ? 'Hide forecast' : 'View 5 days forecast' }}
   </ion-button>
 
   <div *ngIf="this.forecastFlag">
-    <ion-card *ngFor="let day of weather" class="forecastCard">
+    <ion-card *ngFor="let day of forecast" class="forecastCard">
       <ion-card class="date">
         <ion-card-subtitle class="dateText">{{ day.date }}</ion-card-subtitle>
       </ion-card>

@@ -6,6 +6,7 @@ import { DataService } from '../services/data.service';
 import { HttpOptions } from '@capacitor/core';
 import { HttpService } from '../services/http.service';
 import { Weather } from 'src/model/weather';
+import { Forecast } from 'src/model/forecast';
 
 @Component({
   selector: 'app-weather',
@@ -17,6 +18,7 @@ import { Weather } from 'src/model/weather';
 export class WeatherPage implements OnInit {
 
   weather!: Weather[];
+  forecast!: Forecast[];
   forecastBaseUrl = "https://api.openweathermap.org/data/2.5/forecast?lat=";
   unit!: string;
   forecastUnit!: string;
@@ -73,16 +75,17 @@ export class WeatherPage implements OnInit {
 
   getWeatherDetails(result: any){
       this.description = result.weather[0].description;
-      this.iconUrl = this.iconBaseUrl + result.weather[0].icon + ".png";
+      this.iconUrl = this.iconBaseUrl + result.weather[0].icon + "@2x.png";
       this.temperature = result.main.temp;
   }
 
   viewForecast(){
+    
     this.forecastFlag = !this.forecastFlag;
     if(this.forecastFlag){
       this.prepareForecast();
     } else {
-      this.weather = [];
+      this.forecast = [];
     }
   }
 
@@ -93,37 +96,35 @@ export class WeatherPage implements OnInit {
 
   async prepareForecast(){
     let result = await this.getForecastServicesData();
-    this.weather = [];
     let forecastIndex = 1;
+    this.forecast = [];
     let dateIndex = 1;
     result.data.list.forEach((element: any) => {
       if(forecastIndex %8 == 0){
         let dayDetails = {
-          date: this.getTomorrowDate(dateIndex++),
-          icon: this.iconBaseUrl + element.weather[0].icon + '.png',
+          date: this.getForecastDate(dateIndex++),
+          icon: this.iconBaseUrl + element.weather[0].icon + '@2x.png',
           description: element.weather[0].description,
           temperature: element.main.temp,
         }
-        this.weather.push(dayDetails);
+        this.forecast.push(dayDetails);
       }
       forecastIndex ++;
     })
-    this.getTemperatureUnit();
-    this.forecastFlag = true;
+    this.getForecastTempUnit();
   };
 
-  private getTomorrowDate = (index: number): string => {
-
+  getForecastDate(index: number): string {
     const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + index);
-    const day = String(tomorrow.getDate()).padStart(2, '0'); // Add leading zero if needed
-    const month = String(tomorrow.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(tomorrow.getDate()).padStart(2, '0');
+    const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
     const year = today.getFullYear();
     return `${day}-${month}-${year}`;
   };
 
-  private getTemperatureUnit(): string {
+  getForecastTempUnit(): string {
     
     switch (this.unit) {
       case 'metric':

@@ -6,6 +6,7 @@
 
 <ion-content [fullscreen]="true">
   <ion-item *ngIf="resultStatus == 404">Sorry, no country of this name can be found. Please try a different name.</ion-item>
+
   <ion-card *ngFor="let country of countries let i = index">
     
     <img src="{{ country.flags.png }}" class="countries-img" aria-hidden=""/>
@@ -17,4 +18,5 @@
     </ion-card-header>
     
   </ion-card>
+
 </ion-content>
