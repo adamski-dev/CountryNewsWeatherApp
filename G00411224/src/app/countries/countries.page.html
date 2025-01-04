@@ -9,15 +9,18 @@
 
   <ion-card *ngFor="let country of countries let i = index">
     
-    <img src="{{ country.flags.png }}" class="countries-img" aria-hidden=""/>
+    <img src="{{ country.flag }}" class="countries-img" aria-hidden=""/>
     <ion-card-header>
-      <ion-card-title>{{ country.name.official }}</ion-card-title>
+      <ion-card-title>{{ country.officialName }}</ion-card-title>
       <ion-col></ion-col>
       <!--
       <ion-button expand="block" fill="outline" (click)="openNewsPage(country.cca2, country.name.official)">News</ion-button>
       -->
-      <ion-button expand="block" fill="outline" (click)="openNewNewsPage(country)">News</ion-button>
-      <ion-button expand="block" fill="outline" (click)="openWeatherPage(country.latlng[0], country.latlng[1], country.capital[0])">Weather</ion-button>
+      <ion-button expand="block" fill="outline" (click)="openNewsPage(country)">News</ion-button>
+      <!--
+      <ion-button expand="block" fill="outline" (click)="openWeatherPage(country.latitude, country.longitude, country.capital)">Weather</ion-button>
+      -->
+      <ion-button expand="block" fill="outline" (click)="openNewWeatherPage(country)">Weather</ion-button>
     </ion-card-header>
     
   </ion-card>

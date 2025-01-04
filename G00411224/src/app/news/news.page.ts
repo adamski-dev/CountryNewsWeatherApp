@@ -34,8 +34,8 @@ export class NewsPage implements OnInit {
       let country = await this.dataService.get('country');
       this.options.url = this.options.url.concat(country.cca2);
       let result = await this.httpService.get(this.options);
-      result.status == 200 ? this.fetchNewsContent(result, country.name.official) 
-                           : this.getResultStatusAndCountry(result.status, country.name.official);
+      result.status == 200 ? this.fetchNewsContent(result, country.officialName) 
+                           : this.getResultStatusAndCountry(result.status, country.officialName);
     }
 
     fetchNewsContent(result: any, country: string){

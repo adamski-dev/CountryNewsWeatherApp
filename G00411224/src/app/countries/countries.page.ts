@@ -6,6 +6,7 @@ import { DataService } from '../services/data.service';
 import { HttpService } from '../services/http.service';
 import { HttpOptions } from '@capacitor/core';
 import { Router } from '@angular/router';
+import { Country } from 'src/model/country';
 
 @Component({
   selector: 'app-countries',
@@ -18,7 +19,7 @@ export class CountriesPage implements OnInit {
 
   resultStatus!: number;
   keyWord: string = "";
-  countries!: any[];
+  countries!: Country[];
   options: HttpOptions = {
     url: "https://restcountries.com/v3.1/name/"
   }
@@ -30,31 +31,50 @@ export class CountriesPage implements OnInit {
   }
 
   async getPageContent(){
-    this.keyWord = await this.getKeyWord();
-    this.options.url = this.options.url.concat(this.keyWord);
+    let keyWord = await this.dataService.get('keyWord');
+    this.options.url = this.options.url.concat(keyWord);
     let result = await this.httpService.get(this.options);
-    this.countries = (result.status == 200) ? result.data : (this.resultStatus = result.status);
+    result.status == 200 ? this.fetchCountriesData(result, keyWord)  
+                         : this.getResultStatusAndKeyWord(result.status, keyWord);
   }
 
-  async openNewsPage(countryCCA2: string, countryName: string){
-    await this.dataService.set("countryCCA2", countryCCA2);
-    await this.dataService.set("countryName", countryName);
+  fetchCountriesData(result: any, keyWord: string){
+    this.keyWord = keyWord;
+    this.countries = [];
+    result.data.forEach((element: any) => {
+        let countryDetails = {
+          flag: element.flags.png,
+          cca2: element.cca2,
+          officialName: element.name.official,
+          capital: element.capital[0],
+          latitude: element.latlng[0],
+          longitude: element.latlng[1]
+        }
+        this.countries.push(countryDetails);
+    });
+  }
+
+  getResultStatusAndKeyWord(status: number, keyWord: string){
+    this.resultStatus = status;
+    this.keyWord = keyWord;
+  }
+
+  async openNewsPage(country: Country){
+    await this.dataService.set("country", country);
     this.router.navigate(['/news']);
   }
 
+  /*
   async openWeatherPage(lat: number, lon: number, capital: string){
     await this.dataService.set("latitude", lat);
     await this.dataService.set("longitude", lon);
     await this.dataService.set("capital", capital);
     this.router.navigate(['/weather']);
   }
-
-  async getKeyWord(){
-    return await this.dataService.get('keyWord');
-  }
-  // new code below
-  async openNewNewsPage(country: any){
-    await this.dataService.set("country", country);
-    this.router.navigate(['/news']);
-  }
+  */
+ async openNewWeatherPage(country: Country){
+  await this.dataService.set('country', country);
+  this.router.navigate(['/weather']);
+ }
+ 
 }
