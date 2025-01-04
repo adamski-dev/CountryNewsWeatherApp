@@ -17,18 +17,13 @@ import { Forecast } from 'src/model/forecast';
 })
 export class WeatherPage implements OnInit {
 
-  weather!: Weather[];
+  weather!: Weather;
   forecast!: Forecast[];
   forecastBaseUrl = "https://api.openweathermap.org/data/2.5/forecast?lat=";
   unit!: string;
   forecastUnit!: string;
-  latitude!: number;
-  longitude!: number;
   capital!: string;
-  description!: string;
   iconBaseUrl = "https://openweathermap.org/img/wn/";
-  iconUrl!: string;
-  temperature!: number;
   apiKey = "50284dfe68111c3202262caf235e7ead";
   resultStatus!: number;
   forecastFlag!: boolean;
@@ -59,6 +54,7 @@ export class WeatherPage implements OnInit {
     await this.dataService.set("unit", this.unit);
   }
 
+  /*
   async getPageContent(){
       let result = await this.getServicesData();
       this.resultStatus = result.status;
@@ -78,20 +74,42 @@ export class WeatherPage implements OnInit {
       this.iconUrl = this.iconBaseUrl + result.weather[0].icon + "@2x.png";
       this.temperature = result.main.temp;
   }
+  */
+
+  async getPageContent(){
+    let country = await this.dataService.get('country');
+    this.options.url = this.options.url.concat(
+                                              country.latitude 
+                                              + "&lon=" + country.longitude 
+                                              + "&units=" + this.unit 
+                                              + "&appid=" + this.apiKey);
+    let result = await this.httpService.get(this.options);
+    result.status == 200 ? this.fetchWeatherData(result.data, country.capital)  
+                         : this.getResultStatusAndCapital(result.status, country.capital);
+  }
+
+  fetchWeatherData(result: any, capital: string){
+    this.capital = capital;
+    let todayWeather = {
+      icon: this.iconBaseUrl + result.weather[0].icon + "@2x.png",
+      description: result.weather[0].description,
+      temperature: result.main.temp,
+    }
+    this.weather = todayWeather;
+  }
+
+  getResultStatusAndCapital(status: number, capital: string){
+    this.resultStatus = status;
+    this.capital = capital;
+  }
 
   viewForecast(){
-    
     this.forecastFlag = !this.forecastFlag;
     if(this.forecastFlag){
       this.prepareForecast();
     } else {
       this.forecast = [];
     }
-  }
-
-  async getForecastServicesData(){
-    this.options.url = this.forecastBaseUrl + this.latitude + "&lon=" + this.longitude + "&units=" + this.unit + "&appid=" + this.apiKey;
-    return  await this.httpService.get(this.options); 
   }
 
   async prepareForecast(){
@@ -114,13 +132,23 @@ export class WeatherPage implements OnInit {
     this.getForecastTempUnit();
   };
 
+  async getForecastServicesData(){
+    let country = await this.dataService.get('country');
+    this.options.url = this.forecastBaseUrl 
+                      + country.latitude 
+                      + "&lon=" + country.longitude 
+                      + "&units=" + this.unit 
+                      + "&appid=" + this.apiKey;
+    return  await this.httpService.get(this.options); 
+  }
+
   getForecastDate(index: number): string {
     const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + index);
     const day = String(tomorrow.getDate()).padStart(2, '0');
     const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
-    const year = today.getFullYear();
+    const year = tomorrow.getFullYear();
     return `${day}-${month}-${year}`;
   };
 
@@ -135,6 +163,7 @@ export class WeatherPage implements OnInit {
           return this.forecastUnit = 'K';
       default:
           throw new Error('Invalid temperature description. Use "metric", "imperial", or "standard".');
+    }
   }
-  }
+  
 }
