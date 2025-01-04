@@ -13,31 +13,13 @@
       <ion-card-subtitle class="dateText">Today</ion-card-subtitle>
     </ion-card>
 
-    <ion-img style="width: 80px;" src="{{ weather?.icon }}" aria-hidden=""></ion-img>
-    
+    <ion-img style="width: 80px;" src="{{ weather?.icon }}" aria-hidden=""></ion-img>  
     <ion-card-header>
       <ion-card-title>{{ weather?.description }}</ion-card-title>
       <ion-card-subtitle>{{ weather?.temperature }} ({{ unit }})</ion-card-subtitle>
     </ion-card-header>
   </ion-card>
-  
-  <ion-button size="default" fill="solid" (click)="viewForecast()" class="forecastButton">
-    {{ this.forecastFlag ? 'Hide forecast' : 'View 5 days forecast' }}
-  </ion-button>
-  
 
-  <div *ngIf="this.forecastFlag">
-    <ion-card *ngFor="let day of forecast" class="forecastCard">
-      <ion-card class="date">
-        <ion-card-subtitle class="dateText">{{ day.date }}</ion-card-subtitle>
-      </ion-card>
-      
-      <ion-img style="width: 80px;" src="{{ day.icon }}" aria-hidden=""></ion-img>
-      <ion-card-header>
-        <ion-card-title>{{ day.description }}</ion-card-title>
-        <ion-card-subtitle>{{ day.temperature }} ({{ forecastUnit }})</ion-card-subtitle>
-      </ion-card-header>
-    </ion-card>
-  </div>
+  <app-forecast></app-forecast>
   
 </ion-content>
