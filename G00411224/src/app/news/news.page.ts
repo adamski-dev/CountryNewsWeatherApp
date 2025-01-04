@@ -5,6 +5,7 @@ import { IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardHeader, Io
 import { DataService } from '../services/data.service';
 import { HttpService } from '../services/http.service';
 import { HttpOptions } from '@capacitor/core';
+import { News } from 'src/model/news'; 
 
 @Component({
   selector: 'app-news',
@@ -15,30 +16,44 @@ import { HttpOptions } from '@capacitor/core';
 })
 export class NewsPage implements OnInit {
 
-    resultStatus!: number;
     apiKey = "pub_638369bdc1a34699248a32cd65d0a5b49e2ae";  
+    resultStatus!: number; 
     country!: string;
-    newsData!: any[];
+    newsData!: News[];
     options: HttpOptions = {
       url: "https://newsdata.io/api/1/latest?apikey=" + this.apiKey + "&country=",
     }
   
     constructor(private dataService: DataService, private httpService: HttpService) { }
-  
+    
     ngOnInit() {
-      this.getCountryName();
       this.getPageContent();
     }
-  
+
     async getPageContent(){
-      let CCA2 = await this.dataService.get('countryCCA2');
-      this.options.url = this.options.url.concat(CCA2);
+      let country = await this.dataService.get('country');
+      this.options.url = this.options.url.concat(country.cca2);
       let result = await this.httpService.get(this.options);
-      this.newsData = (result.status == 200) ? result.data.results : (this.resultStatus = result.status);
-      console.log(this.newsData);
+      result.status == 200 ? this.fetchNewsContent(result, country.name.official) 
+                           : this.getResultStatusAndCountry(result.status, country.name.official);
     }
 
-    async getCountryName(){
-      this.country = await this.dataService.get('countryName');
+    fetchNewsContent(result: any, country: string){
+      this.country = country;
+      this.newsData = [];
+      result.data.results.forEach((element: any) => {
+          let newsDetails = {
+            image_url: element.image_url,
+            title: element.title,
+            link: element.link,
+            description: element.description
+          }
+          this.newsData.push(newsDetails);
+      });
+    }
+
+    getResultStatusAndCountry(status: number, country: string){
+      this.resultStatus = status;
+      this.country = country;
     }
 }

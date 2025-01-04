@@ -52,4 +52,9 @@ export class CountriesPage implements OnInit {
   async getKeyWord(){
     return await this.dataService.get('keyWord');
   }
+  // new code below
+  async openNewNewsPage(country: any){
+    await this.dataService.set("country", country);
+    this.router.navigate(['/news']);
+  }
 }
