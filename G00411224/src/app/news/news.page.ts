@@ -14,6 +14,7 @@ import { News } from 'src/model/news';
   standalone: true,
   imports: [IonImg, IonItem, IonCardSubtitle, IonCardTitle, IonCardHeader, IonCard, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
+
 export class NewsPage implements OnInit {
 
     apiKey = "pub_638369bdc1a34699248a32cd65d0a5b49e2ae";  
@@ -55,5 +56,13 @@ export class NewsPage implements OnInit {
     getResultStatusAndCountry(status: number, country: string){
       this.resultStatus = status;
       this.country = country;
+    }
+
+    ionViewDidLeave(){
+      this.clearStorage();
+    }
+
+    async clearStorage(){
+      await this.dataService.remove('country');
     }
 }

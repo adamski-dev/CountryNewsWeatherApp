@@ -22,4 +22,8 @@ export class DataService {
     return await this.storage.get(key);
   }
 
+  async remove(key: string){
+    await this.storage.remove(key);
+  }
+
 }
