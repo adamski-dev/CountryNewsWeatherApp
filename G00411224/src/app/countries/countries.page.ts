@@ -7,6 +7,7 @@ import { HttpService } from '../services/http.service';
 import { HttpOptions } from '@capacitor/core';
 import { Router } from '@angular/router';
 import { Country } from 'src/model/country';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-countries',
@@ -15,16 +16,18 @@ import { Country } from 'src/model/country';
   standalone: true,
   imports: [IonCol, IonItem, IonButton, IonCardTitle, IonCardHeader, IonCard, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
-export class CountriesPage implements OnInit {
 
+export class CountriesPage implements OnInit {
+  
   resultStatus!: number;
+  toastrMessage: boolean = false;
   keyWord: string = "";
   countries!: Country[];
   options: HttpOptions = {
     url: "https://restcountries.com/v3.1/name/"
   }
 
-  constructor(private dataService: DataService, private httpService: HttpService, private router: Router) { }
+  constructor(private dataService: DataService, private httpService: HttpService, private router: Router, private toastr: ToastrService) { }
 
   ngOnInit() {
     this.getPageContent();
@@ -32,14 +35,14 @@ export class CountriesPage implements OnInit {
 
   async getPageContent(){
     let keyWord = await this.dataService.get('keyWord');
+    this.keyWord = keyWord;
     this.options.url = this.options.url.concat(keyWord);
     let result = await this.httpService.get(this.options);
-    result.status == 200 ? this.fetchCountriesData(result, keyWord)  
-                         : this.getResultStatusAndKeyWord(result.status, keyWord);
+    result.status == 200 ? this.fetchCountriesData(result)  
+                         : this.resultStatus = result.status;
   }
 
-  fetchCountriesData(result: any, keyWord: string){
-    this.keyWord = keyWord;
+  fetchCountriesData(result: any){
     this.countries = [];
     result.data.forEach((element: any) => {
         let countryDetails = {
@@ -52,11 +55,19 @@ export class CountriesPage implements OnInit {
         }
         this.countries.push(countryDetails);
     });
+    this.displayInfo();;
   }
 
-  getResultStatusAndKeyWord(status: number, keyWord: string){
-    this.resultStatus = status;
-    this.keyWord = keyWord;
+  displayInfo(){
+    this.countries.length > 1 ? this.toastr.success('Countries loaded successfully')
+                              : this.toastr.success('Country loaded successfully')
+  }
+
+  checkStatus() {
+    if(this.resultStatus && !this.toastrMessage) {
+      this.toastr.error('Request returned status code: ' + this.resultStatus);
+      this.toastrMessage = true; 
+    }
   }
 
   async openNewsPage(country: Country){
@@ -64,9 +75,9 @@ export class CountriesPage implements OnInit {
     this.router.navigate(['/news']);
   }
 
- async openWeatherPage(country: Country){
-  await this.dataService.set('country', country);
-  this.router.navigate(['/weather']);
- }
+  async openWeatherPage(country: Country){
+   await this.dataService.set('country', country);
+   this.router.navigate(['/weather']);
+  }
 
 }

@@ -23,8 +23,9 @@ export class WeatherPage implements OnInit {
   iconBaseUrl = "https://openweathermap.org/img/wn/";
   apiKey = "50284dfe68111c3202262caf235e7ead";
   resultStatus!: number;
+  weatherUrl = "https://api.openweathermap.org/data/2.5/weather?lat="
   options: HttpOptions = {
-        url: "https://api.openweathermap.org/data/2.5/weather?lat=",
+        url: "",
   }
 
   constructor(private dataService: DataService, private httpService: HttpService) { }
@@ -51,11 +52,11 @@ export class WeatherPage implements OnInit {
 
   async getPageContent(){
     let country = await this.dataService.get('country');
-    this.options.url = this.options.url.concat(
-                                              country.latitude 
-                                              + "&lon=" + country.longitude 
-                                              + "&units=" + this.unit 
-                                              + "&appid=" + this.apiKey);
+    this.options.url = this.weatherUrl
+                        + country.latitude 
+                        + "&lon=" + country.longitude 
+                        + "&units=" + this.unit 
+                        + "&appid=" + this.apiKey;
     let result = await this.httpService.get(this.options);
     result.status == 200 ? this.fetchWeatherData(result.data, country.capital)  
                          : this.getResultStatusAndCapital(result.status, country.capital);

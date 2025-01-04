@@ -33,14 +33,14 @@ export class NewsPage implements OnInit {
 
     async getPageContent(){
       let country = await this.dataService.get('country');
+      this.country = country.officialName;
       this.options.url = this.options.url.concat(country.cca2);
       let result = await this.httpService.get(this.options);
-      result.status == 200 ? this.fetchNewsContent(result, country.officialName) 
-                           : this.getResultStatusAndCountry(result.status, country.officialName);
+      result.status == 200 ? this.fetchNewsContent(result) 
+                           : this.resultStatus = result.status;
     }
 
-    fetchNewsContent(result: any, country: string){
-      this.country = country;
+    fetchNewsContent(result: any){
       this.newsData = [];
       result.data.results.forEach((element: any) => {
           let newsDetails = {
@@ -51,11 +51,6 @@ export class NewsPage implements OnInit {
           }
           this.newsData.push(newsDetails);
       });
-    }
-
-    getResultStatusAndCountry(status: number, country: string){
-      this.resultStatus = status;
-      this.country = country;
     }
 
     ionViewDidLeave(){

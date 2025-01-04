@@ -17,7 +17,6 @@ export class HomePage  {
   keyword: string = "";
 
   constructor(private dataService: DataService, private router: Router) {
-    
   }
 
   async openCountriesPage(){
