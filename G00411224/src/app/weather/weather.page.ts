@@ -75,4 +75,12 @@ export class WeatherPage implements OnInit {
     this.resultStatus = status;
     this.capital = capital;
   }
+
+  ionViewDidLeave(){
+    this.clearStorage();
+  }
+
+  async clearStorage(){
+    await this.dataService.remove('country');
+  }
 }
