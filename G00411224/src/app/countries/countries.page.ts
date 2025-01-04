@@ -64,17 +64,9 @@ export class CountriesPage implements OnInit {
     this.router.navigate(['/news']);
   }
 
-  /*
-  async openWeatherPage(lat: number, lon: number, capital: string){
-    await this.dataService.set("latitude", lat);
-    await this.dataService.set("longitude", lon);
-    await this.dataService.set("capital", capital);
-    this.router.navigate(['/weather']);
-  }
-  */
- async openNewWeatherPage(country: Country){
+ async openWeatherPage(country: Country){
   await this.dataService.set('country', country);
   this.router.navigate(['/weather']);
  }
- 
+
 }

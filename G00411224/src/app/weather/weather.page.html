@@ -4,7 +4,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" *ngIf="weather">
 
   <ion-item *ngIf="resultStatus == 422"><h4>No Weather Data found for {{ capital }}</h4></ion-item>
   
@@ -13,10 +13,10 @@
       <ion-card-subtitle class="dateText">Today</ion-card-subtitle>
     </ion-card>
 
-    <ion-img style="width: 80px;" src="{{ weather?.icon }}" aria-hidden=""></ion-img>  
+    <ion-img style="width: 80px;" src="{{ weather.icon }}" aria-hidden=""></ion-img>  
     <ion-card-header>
-      <ion-card-title>{{ weather?.description }}</ion-card-title>
-      <ion-card-subtitle>{{ weather?.temperature }} ({{ unit }})</ion-card-subtitle>
+      <ion-card-title>{{ weather.description }}</ion-card-title>
+      <ion-card-subtitle>{{ weather.temperature }} ({{ unit }})</ion-card-subtitle>
     </ion-card-header>
   </ion-card>
 
