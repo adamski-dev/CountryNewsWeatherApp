@@ -4,11 +4,11 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" *ngIf="weather">
+<ion-content [fullscreen]="true">
 
-  <ion-item *ngIf="resultStatus == 422"><h4>No Weather Data found for {{ capital }}</h4></ion-item>
+  <ion-item *ngIf="resultStatus"><h4>No Weather Data found for {{ capital }}</h4></ion-item>
   
-  <ion-card class="today">
+  <ion-card class="today" *ngIf="weather">
     <ion-card class="date">
       <ion-card-subtitle class="dateText">Today</ion-card-subtitle>
     </ion-card>

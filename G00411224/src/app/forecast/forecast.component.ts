@@ -5,6 +5,7 @@ import { HttpOptions } from '@capacitor/core';
 import { DataService } from '../services/data.service';
 import { HttpService } from '../services/http.service';
 import { Forecast } from 'src/model/forecast';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-forecast',
@@ -17,6 +18,7 @@ import { Forecast } from 'src/model/forecast';
 export class ForecastComponent  implements OnInit {
 
   @Input() forecast!: Forecast[];
+  resultStatus!: number;
   forecastUnit!: string;
   forecastFlag!: boolean;
   unit!: string;
@@ -27,27 +29,40 @@ export class ForecastComponent  implements OnInit {
           url: "",
   }
 
-  constructor(private dataService: DataService, private httpService: HttpService) { }
+  constructor(private dataService: DataService, 
+              private httpService: HttpService,
+              private toastr: ToastrService) { }
 
   ngOnInit() {
-    this.getUnit();
-  }
-
-  async getUnit(){
-    this.unit = await this.dataService.get('unit');
   }
 
   viewForecast(){
     this.forecastFlag = !this.forecastFlag;
     if(this.forecastFlag){
-      this.prepareForecast();
+      this.getPageContent();
     } else {
       this.forecast = [];
     }
   }
 
-  async prepareForecast(){
+  async getPageContent(){
     let result = await this.getForecastServicesData();
+    result.status == 200 ? this.fetchForecastData(result)  
+                         : this.getErrorDetails(result);
+  };
+
+  async getForecastServicesData(){
+    this.unit = await this.dataService.get('unit');
+    let country = await this.dataService.get('country');
+    this.options.url = this.forecastUrl 
+                      + country.latitude 
+                      + "&lon=" + country.longitude 
+                      + "&units=" + this.unit 
+                      + "&appid=" + this.apiKey;
+    return  await this.httpService.get(this.options); 
+  }
+
+  fetchForecastData(result: any){
     let forecastIndex = 1;
     this.forecast = [];
     let dateIndex = 1;
@@ -64,16 +79,17 @@ export class ForecastComponent  implements OnInit {
       forecastIndex ++;
     })
     this.getForecastTempUnit();
-  };
+    this.displayInfo();
+  }
 
-  async getForecastServicesData(){
-    let country = await this.dataService.get('country');
-    this.options.url = this.forecastUrl 
-                      + country.latitude 
-                      + "&lon=" + country.longitude 
-                      + "&units=" + this.unit 
-                      + "&appid=" + this.apiKey;
-    return  await this.httpService.get(this.options); 
+  displayInfo(){
+    this.toastr.success('Forecast data loaded successfully');
+  }
+
+  getErrorDetails(result: any){
+    this.resultStatus = result.data.cod;
+    let errorMessage = result.data.message;
+    this.toastr.error('Request returned status code: ' + this.resultStatus + " " + errorMessage);
   }
 
   getForecastDate(index: number): string {

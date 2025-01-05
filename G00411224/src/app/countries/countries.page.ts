@@ -20,14 +20,16 @@ import { ToastrService } from 'ngx-toastr';
 export class CountriesPage implements OnInit {
   
   resultStatus!: number;
-  toastrMessage: boolean = false;
   keyWord: string = "";
   countries!: Country[];
   options: HttpOptions = {
     url: "https://restcountries.com/v3.1/name/"
   }
 
-  constructor(private dataService: DataService, private httpService: HttpService, private router: Router, private toastr: ToastrService) { }
+  constructor(private dataService: DataService, 
+              private httpService: HttpService,  
+              private router: Router, 
+              private toastr: ToastrService) { }
 
   ngOnInit() {
     this.getPageContent();
@@ -39,7 +41,7 @@ export class CountriesPage implements OnInit {
     this.options.url = this.options.url.concat(keyWord);
     let result = await this.httpService.get(this.options);
     result.status == 200 ? this.fetchCountriesData(result)  
-                         : this.resultStatus = result.status;
+                         : this.getErrorDetails(result);
   }
 
   fetchCountriesData(result: any){
@@ -63,11 +65,10 @@ export class CountriesPage implements OnInit {
                               : this.toastr.success('Country loaded successfully')
   }
 
-  checkStatus() {
-    if(this.resultStatus && !this.toastrMessage) {
-      this.toastr.error('Request returned status code: ' + this.resultStatus);
-      this.toastrMessage = true; 
-    }
+  getErrorDetails(result: any) {
+    this.resultStatus = result.data.status;
+    let errorMessage = result.data.message;
+    this.toastr.error('Request returned status code: ' + this.resultStatus + " " + errorMessage); 
   }
 
   async openNewsPage(country: Country){

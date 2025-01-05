@@ -5,7 +5,8 @@ import { IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardHeader, Io
 import { DataService } from '../services/data.service';
 import { HttpService } from '../services/http.service';
 import { HttpOptions } from '@capacitor/core';
-import { News } from 'src/model/news'; 
+import { News } from 'src/model/news';
+import { ToastrService } from 'ngx-toastr'; 
 
 @Component({
   selector: 'app-news',
@@ -21,11 +22,14 @@ export class NewsPage implements OnInit {
     resultStatus!: number; 
     country!: string;
     newsData!: News[];
+    baseUrl = "https://newsdata.io/api/1/latest?apikey=" + this.apiKey + "&country=";
     options: HttpOptions = {
-      url: "https://newsdata.io/api/1/latest?apikey=" + this.apiKey + "&country=",
+      url: "",
     }
   
-    constructor(private dataService: DataService, private httpService: HttpService) { }
+    constructor(private dataService: DataService, 
+                private httpService: HttpService,
+                private toastr: ToastrService) { }
     
     ngOnInit() {
       this.getPageContent();
@@ -34,10 +38,10 @@ export class NewsPage implements OnInit {
     async getPageContent(){
       let country = await this.dataService.get('country');
       this.country = country.officialName;
-      this.options.url = this.options.url.concat(country.cca2);
+      this.options.url = this.baseUrl + country.cca2;
       let result = await this.httpService.get(this.options);
       result.status == 200 ? this.fetchNewsContent(result) 
-                           : this.resultStatus = result.status;
+                           : this.getErrorDetails(result);
     }
 
     fetchNewsContent(result: any){
@@ -51,6 +55,17 @@ export class NewsPage implements OnInit {
           }
           this.newsData.push(newsDetails);
       });
+      this.displayInfo();
+    }
+
+    displayInfo(){
+      this.toastr.success('News data loaded successfully');
+    }
+
+    getErrorDetails(result: any) {
+      this.resultStatus = result.status;
+      let errorMessage = result.data.results.message;
+      this.toastr.error('Request returned status code: ' + this.resultStatus + " " + errorMessage); 
     }
 
     ionViewDidLeave(){

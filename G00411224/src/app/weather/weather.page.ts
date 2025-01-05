@@ -7,6 +7,7 @@ import { HttpOptions } from '@capacitor/core';
 import { HttpService } from '../services/http.service';
 import { Weather } from 'src/model/weather';
 import { ForecastComponent } from "../forecast/forecast.component";
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-weather',
@@ -28,7 +29,9 @@ export class WeatherPage implements OnInit {
         url: "",
   }
 
-  constructor(private dataService: DataService, private httpService: HttpService) { }
+  constructor(private dataService: DataService, 
+              private httpService: HttpService,
+              private toastr: ToastrService) { }
 
   ngOnInit() {
     this.getUnit();
@@ -52,29 +55,35 @@ export class WeatherPage implements OnInit {
 
   async getPageContent(){
     let country = await this.dataService.get('country');
+    this.capital = country.capital;
     this.options.url = this.weatherUrl
                         + country.latitude 
                         + "&lon=" + country.longitude 
                         + "&units=" + this.unit 
                         + "&appid=" + this.apiKey;
     let result = await this.httpService.get(this.options);
-    result.status == 200 ? this.fetchWeatherData(result.data, country.capital)  
-                         : this.getResultStatusAndCapital(result.status, country.capital);
+    result.status == 200 ? this.fetchWeatherData(result.data)  
+                         : this.getErrorDetails(result);
   }
 
-  fetchWeatherData(result: any, capital: string){
-    this.capital = capital;
+  fetchWeatherData(result: any){
     let todayWeather = {
       icon: this.iconBaseUrl + result.weather[0].icon + "@2x.png",
       description: result.weather[0].description,
       temperature: result.main.temp,
     }
     this.weather = todayWeather;
+    this.displayInfo();
   }
 
-  getResultStatusAndCapital(status: number, capital: string){
-    this.resultStatus = status;
-    this.capital = capital;
+  displayInfo(){
+    this.toastr.success('Weather data loaded successfully');
+  }
+
+  getErrorDetails(result: any){
+    this.resultStatus = result.data.cod;
+    let errorMessage = result.data.message;
+    this.toastr.error('Request returned status code: ' + this.resultStatus + " " + errorMessage);
   }
 
   ionViewDidLeave(){
