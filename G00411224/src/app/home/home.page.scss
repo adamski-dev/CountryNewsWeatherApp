@@ -26,8 +26,9 @@
   text-decoration: none;
 }
 
+// additional class to style the settings icon displayed on the header bar
 .ionIcon {
-  display: inline;
-  float: right;
-  cursor: pointer;
+  display: inline; /* Keeps the element inline within the flow of other elements. */
+  float: right;    /* Moves the element to the right within its containing element. */
+  cursor: pointer; /* Changes the cursor to a pointer, indicating the element is clickable. */
 }
